@@ -1,7 +1,6 @@
 import subprocess
 import sys
 import os
-from datetime import datetime
 import json
 
 def main():
@@ -30,9 +29,9 @@ _\ \ | | | |_| |   <   \ V /| |_| | | | | | / __  /| |_| | | | | ||  __/ |
       print(f'''{hunter}''')
       print(f'''{bar}\n''')
 
-    timetag = datetime.now().strftime("%Y%m%d%H%M%S")
-
-    use_snyk_os(path, here, vuln, timetag)
+    print(f'''Scanning for Open Source Findings:''')
+    print(f'''{"-" * len("Scanning for Open Source Findings:")}\n''')
+    use_snyk_os(path, here, vuln)
     # use_snyk_code(path, here, vuln)
 
     os.chdir(here)
@@ -40,7 +39,7 @@ _\ \ | | | |_| |   <   \ V /| |_| | | | | | / __  /| |_| | | | | ||  __/ |
   else:
     print("Error: Please provide both a path and a string as parameters.", file=sys.stderr)
 
-def use_snyk_os(app_loc, cur_loc, vuln, t):
+def use_snyk_os(app_loc, cur_loc, vuln):
   try:
     os.chdir(app_loc)
     # command = ['snyk test --json --strict-out-of-sync=false > ', cur_loc, 'snyk-vuln-rep-os-', t, '.json' ]
@@ -62,6 +61,9 @@ def os_vuln_hunter(data, vuln):
   # Print the filtered data sets
   for data_set in filtered_data_sets:
     print(f'''{data_set["id"]}: from package:{data_set["name"]}:{data_set["version"]} and it is upgradeable -> {data_set["isUpgradable"]} from -> {data_set["from"]} upgradepath -> {data_set["upgradePath"]} it is fixed in versions -> {data_set["fixedIn"]}\n''')
+
+  if len(filtered_data_sets) == 0:
+    print(f'''Congrats! The Vulnerability is not found in the Open Source Packages!''')
 
 def filter_os_data_set(data, vuln):
   clean_data = []
