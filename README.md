@@ -12,13 +12,25 @@ Sean Clarke
 - Linux based operating system
 
 ## Getting Started
-\[ Provide instructions on how to get started with the project. \]
+- Ensure all the prerequisites are met. 
+- clone the repo 
 
 ### Setup
-\[ Include step-by-step instructions on how to set up the project locally. This may include cloning the repository, installing dependencies, and any other required configurations. \]
+- No additional setup required.  It is simply a python script.
 
 ## Usage
-\[ Explain how to use the project, including any command-line commands, APIs, or interfaces that users need to interact with. \]
+
+execute the python script passing two parameters as shown below:
+```
+# <directory of application>: is the location of the codebase you are wishing to evaluate
+# <CVE or CWE>: is the EXACT CWE or CVE.  IE. "CWE-601", "CVE-2021-31819", NOT "601" or "CVE202131819"
+
+python3 snyk-vuln-hunter.py "<directory of application>" "<CVE or CWE>"
+
+```
 
 ## Features
-\[ List and describe the main features or functionalities of the project. Include any demos, screenshots, or code snippets to showcase these features. \]
+Easily discover if you have a specific vulnerability your organization needs to address!
+
+## Sample Test
+- Use goof repository and search for CWE-601.  There should be an Open Source and Code discovery. 
