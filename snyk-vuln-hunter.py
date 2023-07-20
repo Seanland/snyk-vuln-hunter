@@ -29,10 +29,18 @@ _\ \ | | | |_| |   <   \ V /| |_| | | | | | / __  /| |_| | | | | ||  __/ |
       print(f'''{hunter}''')
       print(f'''{bar}\n''')
 
+    os.chdir(path)
+
     print(f'''Scanning for Open Source Findings:''')
     print(f'''{"-" * len("Scanning for Open Source Findings:")}\n''')
     use_snyk_os(path, here, vuln)
-    # use_snyk_code(path, here, vuln)
+
+    print(f'''Scanning for SAST Findings:''')
+    print(f'''{"-" * len("Scanning for SAST Findings:")}\n''')
+    if vuln.startswith(("CWE")):
+      use_snyk_code(vuln)
+    else:
+      print(f'''Snyk Code Results require a CWE!''')
 
     os.chdir(here)
 
@@ -41,7 +49,6 @@ _\ \ | | | |_| |   <   \ V /| |_| | | | | | / __  /| |_| | | | | ||  __/ |
 
 def use_snyk_os(app_loc, cur_loc, vuln):
   try:
-    os.chdir(app_loc)
     # command = ['snyk test --json --strict-out-of-sync=false > ', cur_loc, 'snyk-vuln-rep-os-', t, '.json' ]
     command = ['snyk test --json --strict-out-of-sync=false']
     result = subprocess.run(command, capture_output = True, text = True, shell = True)
@@ -53,6 +60,30 @@ def use_snyk_os(app_loc, cur_loc, vuln):
   except FileNotFoundError:
     print("Error: 'snyk' command not found. Please make sure it is installed and added to the system PATH.", file = sys.stderr)
 
+def use_snyk_code(vuln):
+  command = ['snyk code test --json']
+  result = subprocess.run(command, capture_output = True, text = True, shell = True)
+
+  data = json.loads(result.stdout)
+
+  clean_data = []
+
+  # print(data["runs"][0]["tool"]["driver"]["rules"][0])
+
+  for data_set in data["runs"][0]["tool"]["driver"]["rules"]:
+    # print(data_set)
+    if "cwe" in data_set["properties"]:
+      if vuln in data_set["properties"]["cwe"]:
+        clean_data.append(data_set)
+
+  # output
+  for data_set in clean_data:
+    print(f'''"{data_set["shortDescription"]["text"]}" discovered in this code base. Check IDE or UI for the location.\n''')
+
+  if len(clean_data) == 0:
+    print(f'''Congrats! The Vulnerability is not found in the SAST Scan!\n''')
+
+
 def os_vuln_hunter(data, vuln):
   filtered_data_sets = []
 
@@ -63,7 +94,7 @@ def os_vuln_hunter(data, vuln):
     print(f'''{data_set["id"]}: from package:{data_set["name"]}:{data_set["version"]} and it is upgradeable -> {data_set["isUpgradable"]} from -> {data_set["from"]} upgradepath -> {data_set["upgradePath"]} it is fixed in versions -> {data_set["fixedIn"]}\n''')
 
   if len(filtered_data_sets) == 0:
-    print(f'''Congrats! The Vulnerability is not found in the Open Source Packages!''')
+    print(f'''Congrats! The Vulnerability is not found in the Open Source Packages!\n''')
 
 def filter_os_data_set(data, vuln):
   clean_data = []
