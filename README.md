@@ -34,3 +34,6 @@ Easily discover if you have a specific vulnerability your organization needs to 
 
 ## Sample Test
 - Use goof repository and search for CWE-601.  There should be an Open Source and Code discovery. 
+
+## Disclaimer
+This is being made as part of the [2023 Summer Namedapolooza Event](https://namedapolooza.ca/events/2023-summer/).  Please visit [the repository](https://github.com/Seanland/namedapolooza) for more details!
